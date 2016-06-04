@@ -1,94 +1,46 @@
 # coding: utf-8
 
 import urllib
-import os
 import urllib2
+import numpy as np
 from PIL import Image
 from cStringIO import StringIO
 from sklearn.externals import joblib
 
 
-def img2single(infile, where_save):
-    images = []
-    raw_img = Image.open(infile).convert("L")
-    x_size, y_size = raw_img.size
-    y_size -= 5
-    new = raw_img.crop((4, 1, x_size-18, y_size))
-    x_size, y_size = new.size
-    length = x_size/4
-    for i in range(4):
-        images.append(new.crop((i*length, 0, (i+1)*length, y_size)))
-    for index, img in enumerate(images):
-        img.save(where_save+'%s.png' % str(index+1))
-
-
-def get_data(where_x_pics):
-    pic_data = []
-
-    for j in range(4):
-        pic_file = where_x_pics + '%s.png' % str(j+1)
-        im = Image.open(pic_file)
-        width, height = im.size
-        result = []
-        for h in range(0, height):
-            for w in range(0, width):
-                pixel = im.getpixel((w, h))
-                result.append(pixel)
-        pic_data.append(result)
-    return pic_data
-
-
-def verify_and_save(url, model, save_path):
+def verify(url, model, save=False):
     """
-
     :param url: 验证码地址
     :param model: 处理该验证码的模型
-    :param save_path: 存放验证码的目录
+    :param save: 是否保存临时文件到cache
     :return:
     """
-    pic_file = save_path + 'todo.png'
-    urllib.urlretrieve(url, pic_file)
-    img2single(pic_file, save_path)
-
-    data = get_data(save_path)
-    clf = joblib.load(model)
-    raw_data = clf.predict(data)
-    result = map(chr, map(lambda x: x+48 if 0 <= x <= 9 else x+87, map(int, raw_data)))
-
-    return result
-
-
-def verify_without_save(url, model):
-    pic_data = []
-    f = StringIO(urllib2.urlopen(url).read())
-    raw_img = Image.open(f)
-    x_size, y_size = raw_img.size
+    if save:
+        pic_file = 'cache/todo.png'
+        urllib.urlretrieve(url, pic_file)
+        image = Image.open(pic_file).convert("L")
+    else:
+        image = Image.open(StringIO(urllib2.urlopen(url).read()))
+    x_size, y_size = image.size
     y_size -= 5
-    new = raw_img.crop((4, 1, x_size-18, y_size))
-    x_size, y_size = new.size
-    length = x_size/4
-    for i in range(4):
-        im = new.crop((i*length, 0, (i+1)*length, y_size))
-        width, height = im.size
-        result = []
-        for h in range(0, height):
-            for w in range(0, width):
-                pixel = im.getpixel((w, h))
-                result.append(pixel)
-        pic_data.append(result)
 
+    # y from 1 to y_size-5
+    # x from 4 to x_size-18
+    piece = (x_size-22) / 8
+    centers = [4+piece*(2*i+1) for i in range(4)]
+    data = np.empty((4, 21 * 16), dtype="float32")
+    for i, center in enumerate(centers):
+        single_pic = image.crop((center-(piece+2), 1, center+(piece+2), y_size))
+        data[i, :] = np.asarray(single_pic, dtype="float32").flatten() / 255.0
+        if save:
+            single_pic.save('cache/todo-%s.png' % i)
     clf = joblib.load(model)
-    raw_data = clf.predict(pic_data)
-    result = map(chr, map(lambda x: x+48 if 0 <= x <= 9 else x+87, map(int, raw_data)))
-
-    return result
-
+    answers = clf.predict(data)
+    answers = map(chr, map(lambda x: x + 48 if x <= 9 else x + 87 if x <= 23 else x + 88, map(int, answers)))
+    return answers
 
 if __name__ == '__main__':
     the_url = 'http://jwxt.jit.edu.cn/CheckCode.aspx'
-    the_model = os.getcwd() + '/model/zf_linearSVC.pkl'
-    the_save_path = os.getcwd() + '/cache/'
-
-    print verify_and_save(the_url, the_model, the_save_path)
-
-    print verify_without_save(the_url, the_model)
+    the_model = 'model/zf_linearSVC.pkl'
+    print verify(the_url, the_model)
+    print verify(the_url, the_model, save=True)

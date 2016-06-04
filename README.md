@@ -8,10 +8,10 @@
 
 ![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Sklearn/Achievement.png)
 
-### Verify-Manual-Python:
+### Verify-Manual-python:
     TO BE DONE
 
-### Verify-Manual-Octave:
+### Verify-Manual-octave:
     TO BE DONE
 
 * Copyright

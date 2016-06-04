@@ -15,4 +15,4 @@
     TO BE DONE
 
 * Copyright
-  * Do not for commercial.(if you must do, please contact me.)
+  * Do not for commercial.(If you must do, please contact me.)

@@ -8,9 +8,11 @@
 
 ![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Sklearn/Achievement.png)
 
-### Verify-Manual-python:
+### Verify-Manual-Python:
     TO BE DONE
 
-### Verify-Manual-octave:
+### Verify-Manual-Octave:
     TO BE DONE
 
+* Copyright
+  * Do not for commercial.(if you must do, please contact me.)

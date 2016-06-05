@@ -1,108 +1,39 @@
-# coding:utf-8
+# coding: utf-8
+import urllib
+from PIL import Image
+from numpy import matrix
+from numpy import loadtxt
+from predictOneVsAll import predictOneVsAll
 
-import re, string  
-import sys, os  
-import urllib, Image
-from predict import predict
 
-def savepic(url, savepath, picname):
-    if not os.path.exists(savepath):  
-        os.mkdir(savepath)  
-    pic= savepath + picname
-    urllib.urlretrieve(url,pic)
+def prepare_data(url):
+    pic_file = 'cache/todo.png'
+    urllib.urlretrieve(url, pic_file)
+    with open('cache/X.dat', 'w') as x_file:
+        image = Image.open(pic_file).convert("L")
+        x_size, y_size = image.size
+        y_size -= 5
+        # y from 1 to y_size-5
+        # x from 4 to x_size-18
+        piece = (x_size-22) / 8
+        centers = [4+piece*(2*i+1) for i in range(4)]
+        for i, center in enumerate(centers):
+            img = image.crop((center-(piece+2), 1, center+(piece+2), y_size))
+            width, height = img.size
+            for h in range(0, height):
+                for w in range(0, width):
+                    pixel = img.getpixel((w, h))
+                    print >> x_file, pixel,
+            print >> x_file, ''
 
-def ismovepoint(im,width,height):
-    pixel = []
-    try:
-        pixel.append(im.getpixel((width, height-1)))
-        pixel.append(im.getpixel((width, height+1)))
-        pixel.append(im.getpixel((width+1, height)))
-        pixel.append(im.getpixel((width-1, height)))
-        pixel.append(im.getpixel((width-1, height-1)))
-        pixel.append(im.getpixel((width-1, height+1)))
-        pixel.append(im.getpixel((width+1, height-1)))
-        pixel.append(im.getpixel((width+1, height+1)))  
-    except Exception:
-        return True
-    else:
-        for term in pixel:
-            if term > 30:
-                pass
-            else:
-                break 
-        else:
-            return True
-        return False
 
-def to0and1(im):
-    width, height = im.size
-    for h in range(0, height):  
-        for w in range(0, width): 
-            pixel = im.getpixel((w, h)) 
-            if pixel <= 30 and not ismovepoint(im, w, h):
-                pixel = 0
-            else:
-                pixel = 255 
-            im.putpixel((w,h),pixel)
-    return im
+def verify():
+    prepare_data('http://jwxt.jit.edu.cn/CheckCode.aspx')
+    all_theta = matrix(loadtxt('theta.dat'))
+    X = matrix(loadtxt('cache/X.dat')) / 255.0
+    acc, pred = predictOneVsAll(all_theta, X)
+    answers = map(chr, map(lambda x: x + 48 if x <= 9 else x + 87 if x <= 23 else x + 88, pred))
+    return ''.join(answers)
 
-def splitimg(image):
-    image = image.convert("L")
-    xsize, ysize = image.size
-    new = image.crop((4, 0, xsize-18, ysize))
-    xsize, ysize = new.size
-    lenth = xsize/4;
-    part1 = new.crop((0, 0, lenth, ysize))
-    part2 = new.crop((lenth, 0, 2*lenth, ysize))
-    part3 = new.crop((2*lenth, 0, 3*lenth, ysize))
-    part4 = new.crop((3*lenth, 0, 4*lenth, ysize))
-    return part1,part2,part3,part4
+print verify()
 
-def handlepic(filepath, picname):
-    newpath = filepath + 'sigles/'
-    if not os.path.exists(newpath):  
-            os.mkdir(newpath)  
-
-    newname = ['1.png','2.png','3.png','4.png'];
-
-    infile = filepath + picname
-    im = Image.open(infile)
-    imgs = splitimg(im)
-    for i in range(4):
-        to0and1(imgs[i]).save(newpath+newname[i])
-    return newpath, newname
-
-def saveindata(filepath, names, datname):
-    datfile = filepath + datname
-    thefile = open(datfile,'w')
-    for term in names:
-        infile = filepath + term
-        im = Image.open(infile)
-        width, height = im.size
-        for h in range(0, height):  
-            for w in range(0, width):  
-                pixel = im.getpixel((w, h))   
-                print >> thefile, pixel,
-        print >> thefile, ''
-    thefile.close()
-
-def verify(url):
-    """
-    输入图片URL，返回该图片的值，仅限正方验证码图片
-    """
-    filepath=os.getcwd()+'/Data/'
-    picname = 'todo.png'
-    datname = 'X.dat'
-
-    savepic(url, filepath, picname)
-    newpath, names = handlepic(filepath, picname)
-    saveindata(newpath, names, datname)
-
-    Xfile = newpath + datname
-    thetafile = filepath + 'theta.dat'
-    result = predict(Xfile, thetafile)
-    return result
-
-#脚本测试
-if __name__ == '__main__':
-    print verify('http://jwxt.jit.edu.cn/CheckCode.aspx')

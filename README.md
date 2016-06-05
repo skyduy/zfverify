@@ -8,10 +8,15 @@
 
 ![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Sklearn/Achievement.png)
 
-### Verify-Manual-python:
-    TO BE DONE
-
 ### Verify-Manual-octave:
+    Tip:
+        Check the folder for detail.
+使用Octave，从最底层计算。效果图如下：
+
+![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Manual-octave/Achievement.png)
+
+
+### Verify-Manual-python:
     TO BE DONE
 
 * Copyright

@@ -19,3 +19,6 @@
 ###predict.py
     
     接口文件， 传入相应参数，返回识别结果
+
+* Copyright
+  * Do not for commercial.(If you must do, please contact me.)

@@ -19,4 +19,4 @@ def img2single(samples_folder, single_folder):
             image.crop((center-(piece+2), 1, center+(piece+2), y_size)).save('%s/%s-%s.png' % (single_folder, pre, i))
 
 
-img2single('../samples', '../sample_single')
+img2single('samples', 'sample_single')

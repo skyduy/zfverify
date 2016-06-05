@@ -1,5 +1,5 @@
 kv_dict = {}
-with open('answer.txt') as f:
+with open('../answer.txt') as f:
     for value in f:
         value = value.strip()
         for i in value:

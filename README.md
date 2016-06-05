@@ -11,13 +11,19 @@
 ### Verify-Manual-octave:
     Tip:
         Check the folder for detail.
-使用Octave，从最底层计算。效果图如下：
+使用Octave训练。效果图如下：
 
 ![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Manual-octave/Achievement.png)
 
 
 ### Verify-Manual-python:
-    TO BE DONE
+    Tip:
+        Check the folder for detail.
+使用Python从底层计算。效果图如下：
+
+![效果图](https://github.com/skyduy/zfverify/raw/master/Verify-Manual-python/Achievement.png)
+
+
 
 * Copyright
   * Do not for commercial.(If you must do, please contact me.)

@@ -1,6 +1,9 @@
 # 正方验证码识别工具
 ## 使用Numpy, Scipy，从底层实现验证码识别
 ### 注：因为训练样本为正方验证码，故该工具只适合正方验证码识别
+
+    优化方式为scipy.optimize.fmin_bfgs
+
     使用方法：
         0、train/split_imgs.py get_dat.py进行数据获取，手动将X分为X和X_test，对应的y也相应分。
         1、train/core/train.py 中train和test函数分别用于训练和测试

@@ -1,6 +1,5 @@
 clear ; close all; clc;
 
-%input_layer_size  = 16 * 21;    % 16*21 Input Images of Digits
 %num_labels = 34;                % 34 labels, 0-9a-np-y
 %
 %fprintf('... Loading data and training\n');

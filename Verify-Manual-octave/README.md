@@ -13,6 +13,8 @@
         5、运行predict/prepare.py准备待识别数据
         6、运行predict/verify.m进行识别
 
+- Thanks to [Machine Learning (Andrew Ng)](https://zh.coursera.org/learn/machine-learning)
+
 * Copyright
   * OpenSource now.
   * Do not for commercial.(If you must do, please contact me.)

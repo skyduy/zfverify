@@ -1,5 +1,5 @@
 # 正方验证码识别工具
-## 使用Numpy, Scipy，从底层实现验证码识别
+## 使用[Numpy](http://www.numpy.org/), [Scipy](https://www.scipy.org/)，从底层实现验证码识别
 ### 注：因为训练样本为正方验证码，故该工具只适合正方验证码识别
 
     优化方式为scipy.optimize.fmin_bfgs
